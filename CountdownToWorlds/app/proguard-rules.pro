@@ -1,2 +1,0 @@
--keepattributes *Annotation*
--keep public class * extends android.appwidget.AppWidgetProvider
