@@ -25,7 +25,6 @@
             android:text="COUNTDOWN TO"
             android:textColor="#B0C4DE"
             android:textSize="9sp"
-            android:letterSpacing="0.12"
             android:textStyle="bold" />
 
         <TextView
@@ -34,24 +33,15 @@
             android:text="WORLDS"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.06" />
+            android:textStyle="bold" />
 
     </LinearLayout>
-
-    <!-- Divider -->
-    <View
-        android:layout_width="1dp"
-        android:layout_height="36dp"
-        android:background="#44FFFFFF"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="8dp"/>
 
     <!-- Days -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.8"
+        android:layout_weight="0.9"
         android:orientation="vertical"
         android:gravity="center">
 
@@ -62,8 +52,7 @@
             android:text="00"
             android:textColor="#FFFFFF"
             android:textSize="26sp"
-            android:textStyle="bold"
-            android:lineSpacingExtra="-4dp"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_days_label"
@@ -71,8 +60,7 @@
             android:layout_height="wrap_content"
             android:text="DAYS"
             android:textColor="#B0C4DE"
-            android:textSize="8sp"
-            android:letterSpacing="0.1"/>
+            android:textSize="8sp" />
 
     </LinearLayout>
 
@@ -80,7 +68,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.7"
+        android:layout_weight="0.8"
         android:orientation="vertical"
         android:gravity="center">
 
@@ -91,16 +79,14 @@
             android:text="00"
             android:textColor="#E0E8FF"
             android:textSize="22sp"
-            android:textStyle="bold"
-            android:lineSpacingExtra="-4dp"/>
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="HRS"
             android:textColor="#B0C4DE"
-            android:textSize="8sp"
-            android:letterSpacing="0.1"/>
+            android:textSize="8sp" />
 
     </LinearLayout>
 
@@ -108,7 +94,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.7"
+        android:layout_weight="0.8"
         android:orientation="vertical"
         android:gravity="center">
 
@@ -119,16 +105,14 @@
             android:text="00"
             android:textColor="#E0E8FF"
             android:textSize="22sp"
-            android:textStyle="bold"
-            android:lineSpacingExtra="-4dp"/>
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="MIN"
             android:textColor="#B0C4DE"
-            android:textSize="8sp"
-            android:letterSpacing="0.1"/>
+            android:textSize="8sp" />
 
     </LinearLayout>
 
@@ -136,7 +120,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.7"
+        android:layout_weight="0.8"
         android:orientation="vertical"
         android:gravity="center">
 
@@ -147,16 +131,14 @@
             android:text="00"
             android:textColor="#E0E8FF"
             android:textSize="22sp"
-            android:textStyle="bold"
-            android:lineSpacingExtra="-4dp"/>
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SEC"
             android:textColor="#B0C4DE"
-            android:textSize="8sp"
-            android:letterSpacing="0.1"/>
+            android:textSize="8sp" />
 
     </LinearLayout>
 
