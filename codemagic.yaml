@@ -5,6 +5,10 @@ workflows:
     environment:
       java: 17
     scripts:
+      - name: Download gradle-wrapper.jar
+        script: |
+          curl -L "https://github.com/gradle/gradle/raw/v8.2.0/gradle/wrapper/gradle-wrapper.jar" \
+            -o gradle/wrapper/gradle-wrapper.jar
       - name: Set executable permission on gradlew
         script: chmod +x gradlew
       - name: Build debug APK
@@ -14,7 +18,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - euan.m.obrien@gmail.com
+          - your@email.com
         notify:
           success: true
           failure: true
