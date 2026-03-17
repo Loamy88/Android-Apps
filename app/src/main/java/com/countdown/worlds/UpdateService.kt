@@ -7,43 +7,45 @@ import android.app.Service
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import androidx.core.app.NotificationCompat
 
 class UpdateService : Service() {
 
-    private var running = false
+    private val handler = Handler(Looper.getMainLooper())
+    private val tickRunnable = object : Runnable {
+        override fun run() {
+            val paused = getSharedPreferences("widget_prefs", MODE_PRIVATE)
+                .getBoolean("paused", false)
+
+            if (!paused) {
+                val manager = AppWidgetManager.getInstance(this@UpdateService)
+                val ids = manager.getAppWidgetIds(
+                    ComponentName(this@UpdateService, CountdownWidget::class.java)
+                )
+                for (id in ids) {
+                    CountdownWidget.updateAppWidget(this@UpdateService, manager, id)
+                }
+            }
+
+            handler.postDelayed(this, 1000)
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        startForeground(1, buildNotification())
+        handler.post(tickRunnable)
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(1, buildNotification())
-
-        if (!running) {
-            running = true
-            Thread {
-                while (running) {
-                    val paused = getSharedPreferences("widget_prefs", MODE_PRIVATE)
-                        .getBoolean("paused", false)
-
-                    if (!paused) {
-                        val manager = AppWidgetManager.getInstance(this)
-                        val ids = manager.getAppWidgetIds(
-                            ComponentName(this, CountdownWidget::class.java)
-                        )
-                        for (id in ids) {
-                            CountdownWidget.updateAppWidget(this, manager, id)
-                        }
-                    }
-
-                    try { Thread.sleep(1000) } catch (e: InterruptedException) { break }
-                }
-            }.start()
-        }
-
         return START_STICKY
     }
 
     override fun onDestroy() {
-        running = false
+        handler.removeCallbacks(tickRunnable)
         super.onDestroy()
     }
 
@@ -64,3 +66,4 @@ class UpdateService : Service() {
             .build()
     }
 }
+

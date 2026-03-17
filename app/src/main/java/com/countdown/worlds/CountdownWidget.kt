@@ -17,11 +17,11 @@ class CountdownWidget : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         for (id in appWidgetIds) updateAppWidget(context, appWidgetManager, id)
-        context.startForegroundService(Intent(context, UpdateService::class.java))
+        startService(context)
     }
 
     override fun onEnabled(context: Context) {
-        context.startForegroundService(Intent(context, UpdateService::class.java))
+        startService(context)
     }
 
     override fun onDisabled(context: Context) {
@@ -34,17 +34,38 @@ class CountdownWidget : AppWidgetProvider() {
             val paused = prefs.getBoolean("paused", false)
             prefs.edit().putBoolean("paused", !paused).apply()
 
-            val manager = AppWidgetManager.getInstance(context)
-            val ids = manager.getAppWidgetIds(
-                android.content.ComponentName(context, CountdownWidget::class.java)
-            )
-            for (id in ids) updateAppWidget(context, manager, id)
+            // If unpausing, do an immediate update so it doesn't wait a full second
+            if (paused) {
+                val manager = AppWidgetManager.getInstance(context)
+                val ids = manager.getAppWidgetIds(
+                    android.content.ComponentName(context, CountdownWidget::class.java)
+                )
+                for (id in ids) updateAppWidget(context, manager, id)
+            } else {
+                // Just toggled to paused — update icon only
+                val manager = AppWidgetManager.getInstance(context)
+                val ids = manager.getAppWidgetIds(
+                    android.content.ComponentName(context, CountdownWidget::class.java)
+                )
+                for (id in ids) updateAppWidget(context, manager, id)
+            }
+
+            // Ensure service is running
+            startService(context)
         }
         super.onReceive(context, intent)
     }
 
     companion object {
         const val ACTION_TOGGLE = "com.countdown.worlds.ACTION_TOGGLE"
+
+        private fun startService(context: Context) {
+            try {
+                context.startForegroundService(Intent(context, UpdateService::class.java))
+            } catch (e: Exception) {
+                // On Android 12+ this may fail from background; MainActivity will start it
+            }
+        }
 
         fun updateAppWidget(
             context: Context,
@@ -56,7 +77,6 @@ class CountdownWidget : AppWidgetProvider() {
 
             val views = RemoteViews(context.packageName, R.layout.widget_countdown)
 
-            // Toggle click intent
             val toggleIntent = Intent(context, CountdownWidget::class.java).apply {
                 action = ACTION_TOGGLE
             }
@@ -65,24 +85,20 @@ class CountdownWidget : AppWidgetProvider() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             views.setOnClickPendingIntent(R.id.widget_root, togglePending)
-
-            // Pause/play icon
             views.setTextViewText(R.id.tv_toggle_icon, if (paused) "▶" else "⏸")
 
-            if (!paused) {
-                val countdown = getCountdown()
-                if (countdown.days == 0L && countdown.hours == 0 && countdown.minutes == 0 && countdown.seconds == 0) {
-                    views.setTextViewText(R.id.tv_days, "🏆")
-                    views.setTextViewText(R.id.tv_days_label, "IT'S TIME!")
-                    views.setTextViewText(R.id.tv_hours, "")
-                    views.setTextViewText(R.id.tv_minutes, "")
-                    views.setTextViewText(R.id.tv_seconds, "")
-                } else {
-                    views.setTextViewText(R.id.tv_days, countdown.days.toString())
-                    views.setTextViewText(R.id.tv_hours, String.format("%02d", countdown.hours))
-                    views.setTextViewText(R.id.tv_minutes, String.format("%02d", countdown.minutes))
-                    views.setTextViewText(R.id.tv_seconds, String.format("%02d", countdown.seconds))
-                }
+            val countdown = getCountdown()
+            if (countdown.days == 0L && countdown.hours == 0 && countdown.minutes == 0 && countdown.seconds == 0) {
+                views.setTextViewText(R.id.tv_days, "🏆")
+                views.setTextViewText(R.id.tv_days_label, "IT'S TIME!")
+                views.setTextViewText(R.id.tv_hours, "")
+                views.setTextViewText(R.id.tv_minutes, "")
+                views.setTextViewText(R.id.tv_seconds, "")
+            } else {
+                views.setTextViewText(R.id.tv_days, countdown.days.toString())
+                views.setTextViewText(R.id.tv_hours, String.format("%02d", countdown.hours))
+                views.setTextViewText(R.id.tv_minutes, String.format("%02d", countdown.minutes))
+                views.setTextViewText(R.id.tv_seconds, String.format("%02d", countdown.seconds))
             }
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
